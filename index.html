@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinguaMemo — Flashcards intelligentes pour apprendre les langues</title>
+  <meta name="description" content="Apprenez les langues avec des flashcards intelligentes et sur-mesure, propulsées par l'IA." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet" />
+  <!-- Umami Analytics -->
+  <!-- <script defer src="https://stats.crea-dapp.com/script.js" data-website-id="LINGUAMEMO_UMAMI_ID"></script> -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:    #7C3AED;
+      --purple-lt: #EDE9FE;
+      --indigo:    #4F46E5;
+      --dark:      #0F0E17;
+      --gray:      #6B7280;
+      --gray-lt:   #F3F4F6;
+      --white:     #FFFFFF;
+      --radius:    16px;
+    }
+
+    body { font-family: 'Inter', sans-serif; color: var(--dark); background: var(--white); line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 5%;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #F0EEF8;
+    }
+    .logo { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--dark); text-decoration: none; letter-spacing: -0.5px; }
+    .logo span { color: var(--purple); }
+    .lang-toggle { display: flex; gap: 4px; background: var(--gray-lt); border-radius: 8px; padding: 4px; }
+    .lang-toggle button { border: none; background: transparent; cursor: pointer; padding: 5px 12px; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: var(--gray); transition: all 0.2s; }
+    .lang-toggle button.active { background: var(--white); color: var(--purple); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+    /* ── HERO ── */
+    .hero { text-align: center; padding: 96px 5% 80px; background: linear-gradient(160deg, #FAFAFA 0%, #EDE9FE 50%, #EEF2FF 100%); }
+    .badge { display: inline-flex; align-items: center; gap: 6px; background: var(--purple-lt); color: var(--purple); padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 28px; }
+    h1 { font-family: 'Sora', sans-serif; font-size: clamp(32px, 5vw, 56px); font-weight: 800; line-height: 1.15; letter-spacing: -1px; max-width: 760px; margin: 0 auto 20px; }
+    h1 em { font-style: normal; color: var(--purple); }
+    .hero-sub { font-size: clamp(16px, 2vw, 20px); color: var(--gray); max-width: 560px; margin: 0 auto 40px; }
+    .cta-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--purple); color: var(--white); padding: 15px 28px; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(124,58,237,0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.4); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: var(--white); color: var(--dark); padding: 15px 28px; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; border: 1.5px solid #E5E7EB; transition: border-color 0.2s, transform 0.2s; }
+    .btn-secondary:hover { border-color: var(--purple); transform: translateY(-2px); }
+
+    /* ── LANGUAGES STRIP ── */
+    .languages-strip { background: var(--white); padding: 32px 5%; text-align: center; border-bottom: 1px solid #F0EEF8; }
+    .languages-strip p { font-size: 13px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+    .flags { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; align-items: center; }
+    .flag-item { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--dark); }
+    .flag-item span:first-child { font-size: 24px; }
+    .flag-more { font-size: 13px; color: var(--purple); font-weight: 600; background: var(--purple-lt); padding: 4px 12px; border-radius: 100px; }
+
+    /* ── FEATURES ── */
+    .features { padding: 96px 5%; max-width: 1100px; margin: 0 auto; }
+    .section-label { text-align: center; margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--purple); text-transform: uppercase; letter-spacing: 0.08em; }
+    h2 { font-family: 'Sora', sans-serif; font-size: clamp(26px, 4vw, 40px); font-weight: 800; text-align: center; letter-spacing: -0.5px; margin-bottom: 60px; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+
+    .feature-card { background: var(--gray-lt); border-radius: var(--radius); padding: 32px 28px; transition: transform 0.2s, box-shadow 0.2s; }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.07); }
+    .feature-card.accent { background: linear-gradient(135deg, var(--purple) 0%, var(--indigo) 100%); color: var(--white); }
+    .feature-card.accent .feature-desc { color: rgba(255,255,255,0.8); }
+
+    /* Feature icon — carré avec icône SVG */
+    .feature-icon { width: 48px; height: 48px; background: var(--white); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); color: var(--purple); }
+    .feature-card.accent .feature-icon { background: rgba(255,255,255,0.2); box-shadow: none; color: var(--white); }
+
+    .feature-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .feature-desc { font-size: 14px; color: var(--gray); line-height: 1.65; }
+
+    /* ── API SECTION ── */
+    .api-section { background: linear-gradient(160deg, #0F0E17 0%, #1E1B4B 100%); color: var(--white); padding: 96px 5%; }
+    .api-section .section-label { color: #A78BFA; }
+    .api-section h2 { color: var(--white); }
+    .api-section h2 em { font-style: normal; color: #A78BFA; }
+    .api-intro { text-align: center; font-size: 16px; color: rgba(255,255,255,0.65); max-width: 620px; margin: -40px auto 56px; }
+
+    .providers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto 48px; }
+    .provider-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); padding: 28px 24px; transition: background 0.2s, border-color 0.2s; }
+    .provider-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(167,139,250,0.4); }
+    .provider-logo { width: 40px; height: 40px; border-radius: 10px; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .provider-name { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+    .provider-free { display: inline-flex; align-items: center; gap: 5px; background: rgba(52,211,153,0.15); color: #34D399; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
+
+    .api-note { text-align: center; font-size: 14px; color: rgba(255,255,255,0.5); max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 18px 24px; }
+
+    /* ── CTA BOTTOM ── */
+    .cta-section { padding: 96px 5%; text-align: center; background: var(--purple-lt); }
+    .cta-section h2 { margin-bottom: 16px; }
+    .cta-section p { font-size: 16px; color: var(--gray); max-width: 480px; margin: 0 auto 36px; }
+
+    /* ── FOOTER ── */
+    footer { padding: 32px 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-top: 1px solid #F0EEF8; font-size: 13px; color: var(--gray); }
+
+    @media (max-width: 640px) {
+      .hero { padding: 64px 5% 56px; }
+      .features { padding: 64px 5%; }
+      .api-section, .cta-section { padding: 64px 5%; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Lingua<span>Memo</span></a>
+  <div class="lang-toggle">
+    <button class="active" onclick="setLang('fr')">FR</button>
+    <button onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span data-fr="Bientôt sur l'App Store" data-en="Coming soon to the App Store"></span>
+  </div>
+  <h1>
+    <span data-fr="Apprenez les langues avec des <em>flashcards intelligentes</em> et sur-mesure" data-en="Learn languages with <em>smart</em>, personalized flashcards"></span>
+  </h1>
+  <p class="hero-sub" data-fr="LinguaMemo combine traduction, IA et révision espacée pour un apprentissage vraiment efficace — sur iOS." data-en="LinguaMemo combines translation, AI and spaced repetition for genuinely effective language learning — on iOS."></p>
+  <div class="cta-group">
+    <a href="#" class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <span data-fr="Bientôt disponible" data-en="Coming Soon"></span>
+    </a>
+    <a href="#features" class="btn-secondary">
+      <span data-fr="Découvrir les fonctionnalités" data-en="Explore features"></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- LANGUAGES STRIP -->
+<div class="languages-strip">
+  <p data-fr="8 langues disponibles au lancement" data-en="8 languages available at launch"></p>
+  <div class="flags">
+    <div class="flag-item"><span>🇫🇷</span><span data-fr="Français" data-en="French"></span></div>
+    <div class="flag-item"><span>🇪🇸</span><span data-fr="Espagnol" data-en="Spanish"></span></div>
+    <div class="flag-item"><span>🇬🇧</span><span data-fr="Anglais" data-en="English"></span></div>
+    <div class="flag-item"><span>🇵🇹</span><span data-fr="Portugais" data-en="Portuguese"></span></div>
+    <div class="flag-item"><span>🇸🇦</span><span data-fr="Arabe" data-en="Arabic"></span></div>
+    <div class="flag-item"><span>🇨🇳</span><span data-fr="Mandarin" data-en="Mandarin"></span></div>
+    <div class="flag-item"><span>🇯🇵</span><span data-fr="Japonais" data-en="Japanese"></span></div>
+    <div class="flag-item"><span>🇮🇹</span><span data-fr="Italien" data-en="Italian"></span></div>
+    <div class="flag-more" data-fr="+ d'autres à venir" data-en="+ more coming"></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <p class="section-label" data-fr="Fonctionnalités" data-en="Features"></p>
+  <h2 data-fr="Tout ce dont vous avez besoin pour progresser" data-en="Everything you need to progress"></h2>
+
+  <div class="features-grid">
+
+    <!-- Pour changer une icône : remplacer le SVG dans .feature-icon par un autre SVG Heroicons (heroicons.com) -->
+
+    <div class="feature-card accent">
+      <div class="feature-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="feature-title" data-fr="8 langues, traduction instantanée" data-en="8 languages, instant translation"></div>
+      <div class="feature-desc" data-fr="Traduisez depuis et vers 8 langues. Mots, phrases, expressions — tout devient une flashcard en un tap." data-en="Translate to and from 8 languages. Words, sentences, expressions — all become flashcards in one tap."></div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      </div>
+      <div class="feature-title" data-fr="Flashcards sur-mesure" data-en="Personalized flashcards"></div>
+      <div class="feature-desc" data-fr="Transformez n'importe quelle traduction en flashcard instantanément. Construisez votre propre deck, adapté à votre vocabulaire." data-en="Turn any translation into a flashcard instantly. Build your own deck, tailored to your vocabulary."></div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 8v4l3 3"/><path d="M18 2v4h4"/><path d="M22 2l-4 4"/></svg>
+      </div>
+      <div class="feature-title" data-fr="IA au service de l'apprentissage" data-en="AI-powered learning"></div>
+      <div class="feature-desc" data-fr="Posez toutes vos questions sur un mot, un verbe, une expression. Obtenez des exemples contextuels et transformez les réponses en flashcards." data-en="Ask anything about a word, verb or expression. Get contextual examples and turn the answers into flashcards."></div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      </div>
+      <div class="feature-title" data-fr="Prononciation naturelle" data-en="Natural pronunciation"></div>
+      <div class="feature-desc" data-fr="Écoutez chaque mot et phrase prononcés naturellement grâce à une synthèse vocale de haute qualité. Disponible sur iOS." data-en="Hear every word and sentence pronounced naturally with high-quality text-to-speech. Available on iOS."></div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><polyline points="21 3 21 9 15 9"/></svg>
+      </div>
+      <div class="feature-title" data-fr="Révision intelligente" data-en="Smart review system"></div>
+      <div class="feature-desc" data-fr="Un algorithme de révision espacée qui adapte la fréquence des cartes à votre niveau. Révisez ce qu'il faut, au bon moment." data-en="A spaced repetition algorithm that adapts card frequency to your level. Review what you need, at the right time."></div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      </div>
+      <div class="feature-title" data-fr="Votre clé IA, votre contrôle" data-en="Your AI key, your control"></div>
+      <div class="feature-desc" data-fr="Connectez votre propre clé API (Anthropic, OpenAI, Gemini ou Grok). Fonctionne avec les niveaux gratuits de la plupart des fournisseurs." data-en="Connect your own API key (Anthropic, OpenAI, Gemini or Grok). Works with the free tier of most providers."></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- API PROVIDERS -->
+<section class="api-section" id="api">
+  <p class="section-label" data-fr="Compatibilité IA" data-en="AI Compatibility"></p>
+  <h2 data-fr="Connectez votre propre <em>clé IA</em>" data-en="Connect your own <em>AI key</em>"></h2>
+  <p class="api-intro" data-fr="LinguaMemo fonctionne avec les 4 grands fournisseurs de modèles de langage. La plupart proposent un niveau gratuit largement suffisant pour une utilisation quotidienne." data-en="LinguaMemo works with the 4 major language model providers. Most offer a free tier more than sufficient for daily use."></p>
+
+  <div class="providers-grid">
+    <div class="provider-card">
+      <div class="provider-logo" style="background:rgba(124,58,237,0.15);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="provider-name">Anthropic</div>
+      <span class="provider-free">✓ <span data-fr="Niveau gratuit disponible" data-en="Free tier available"></span></span>
+    </div>
+    <div class="provider-card">
+      <div class="provider-logo" style="background:rgba(52,211,153,0.12);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      </div>
+      <div class="provider-name">OpenAI</div>
+      <span class="provider-free">✓ <span data-fr="Niveau gratuit disponible" data-en="Free tier available"></span></span>
+    </div>
+    <div class="provider-card">
+      <div class="provider-logo" style="background:rgba(59,130,246,0.12);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="provider-name">Google</div>
+      <span class="provider-free">✓ <span data-fr="Gratuit avec limites" data-en="Free with limits"></span></span>
+    </div>
+    <div class="provider-card">
+      <div class="provider-logo" style="background:rgba(255,255,255,0.08);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div class="provider-name">xAI</div>
+      <span class="provider-free">✓ <span data-fr="Gratuit avec limites" data-en="Free with limits"></span></span>
+    </div>
+  </div>
+
+  <p class="api-note" data-fr="Un guide détaillé dans l'app vous explique comment obtenir votre clé API chez chacun des fournisseurs et les coûts associés." data-en="A detailed in-app guide explains how to get your API key from each provider and the associated costs."></p>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <p class="section-label" data-fr="Disponibilité" data-en="Availability"></p>
+  <h2 data-fr="Bientôt sur l'App Store" data-en="Coming soon to the App Store"></h2>
+  <p data-fr="LinguaMemo arrive prochainement sur iOS. Support Android en cours de développement." data-en="LinguaMemo is coming soon to iOS. Android support is in development."></p>
+  <a href="#" class="btn-primary">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    <span data-fr="Bientôt disponible sur l'App Store" data-en="Coming soon to the App Store"></span>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="/" class="logo" style="font-size:18px;">Lingua<span>Memo</span></a>
+  <span data-fr="© 2026 LinguaMemo. Tous droits réservés." data-en="© 2026 LinguaMemo. All rights reserved."></span>
+  <a href="mailto:linguamemo@crea-dapp.com" style="color:var(--gray);text-decoration:none;">linguamemo@crea-dapp.com</a>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.querySelectorAll('.lang-toggle button').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+    });
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-fr]').forEach(el => {
+      const text = el.getAttribute('data-' + lang);
+      if (text !== null) el.innerHTML = text;
+    });
+  }
+  setLang('fr');
+</script>
+</body>
+</html>
